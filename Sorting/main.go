@@ -13,6 +13,7 @@ func main() {
 	go sortFloats()
 	go sortStruct()
 	go sortListByTitle()
+	go sortMap()
 
 	time.Sleep(1000 * time.Millisecond)
 }
@@ -60,6 +61,20 @@ func sortStruct() {
 	fmt.Println(family) //[{David 2} {Eve 2} {Alice 23} {Bob 25}]
 }
 
+func sortMap() {
+	m := map[string]int{"Alice": 2, "Cecil": 1, "Bob": 3}
+
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		fmt.Println(k, m[k])
+	}
+}
+
 func sortListByTitle() {
 	p1 := person{"abd", 32, "london"}
 	p2 := person{"zid", 20, "paris"}
@@ -69,6 +84,7 @@ func sortListByTitle() {
 	l := []person{p1, p2, p3, p4}
 
 	sort.Sort(ByAge(l))
+
 	fmt.Println(l) //[{Riz 10 amsterdam} {zid 20 paris} {abd 32 london} {Sam 45 luxembourg}]
 }
 
