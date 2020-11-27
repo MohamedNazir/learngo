@@ -3,37 +3,45 @@ package main
 import (
 	"fmt"
 	"sort"
-	"time"
+	"sync"
 )
 
 func main() {
+	var wg sync.WaitGroup
 
-	go sortInts()
-	go sortStrings()
-	go sortFloats()
-	go sortStruct()
-	go sortListByTitle()
-	go sortMap()
+	wg.Add(6)
 
-	time.Sleep(1000 * time.Millisecond)
+	go sortInts(&wg)
+	go sortStrings(&wg)
+	go sortFloats(&wg)
+	go sortStruct(&wg)
+	go sortListByTitle(&wg)
+	go sortMap(&wg)
+
+	wg.Wait()
+
 }
 
-func sortInts() {
+func sortInts(wg *sync.WaitGroup) {
 	s := []int{4, 2, 3, 1}
 	sort.Ints(s)
 	fmt.Println(s) // [1 2 3 4]
+	defer wg.Done()
+
 }
 
-func sortStrings() {
+func sortStrings(wg *sync.WaitGroup) {
 	s := []string{"zebra", "cat", "ink", "fish"}
 	sort.Strings(s)
 	fmt.Println(s) // [cat fish ink zebra]
+	defer wg.Done()
 }
 
-func sortFloats() {
+func sortFloats(wg *sync.WaitGroup) {
 	s := []float64{23.63, 03.23, 234.234, 35.126}
 	sort.Float64s(s)
 	fmt.Println(s) // [3.23 23.63 35.126 234.234]
+	defer wg.Done()
 }
 
 type person struct {
@@ -42,7 +50,7 @@ type person struct {
 	city string
 }
 
-func sortStruct() {
+func sortStruct(wg *sync.WaitGroup) {
 
 	family := []struct {
 		Name string
@@ -59,9 +67,11 @@ func sortStruct() {
 		return family[i].Age < family[j].Age
 	})
 	fmt.Println(family) //[{David 2} {Eve 2} {Alice 23} {Bob 25}]
+
+	defer wg.Done()
 }
 
-func sortMap() {
+func sortMap(wg *sync.WaitGroup) {
 	m := map[string]int{"Alice": 2, "Cecil": 1, "Bob": 3}
 
 	keys := make([]string, 0, len(m))
@@ -73,9 +83,10 @@ func sortMap() {
 	for _, k := range keys {
 		fmt.Println(k, m[k])
 	}
+	defer wg.Done()
 }
 
-func sortListByTitle() {
+func sortListByTitle(wg *sync.WaitGroup) {
 	p1 := person{"abd", 32, "london"}
 	p2 := person{"zid", 20, "paris"}
 	p3 := person{"Sam", 45, "luxembourg"}
@@ -86,6 +97,8 @@ func sortListByTitle() {
 	sort.Sort(ByAge(l))
 
 	fmt.Println(l) //[{Riz 10 amsterdam} {zid 20 paris} {abd 32 london} {Sam 45 luxembourg}]
+
+	defer wg.Done()
 }
 
 // ByAge implements sort.Interface based on the Age field.
